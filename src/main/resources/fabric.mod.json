@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "spjoin",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "SpJoin allows to sit back and wait for a free slot on your favourite server without any constant re-connecting to it",
+  "author": "ximure",
+  "contact": {
+    "sources": "https://github.com/ximure/spjoin/",
+    "issues": "https://github.com/ximure/spjoin/issues/"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/icon16.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "org.ximure.spjoin.SpJoin"
+    ]
+  },
+  "mixins": [
+    "fabric.mixins.json"
+  ],
+  "depends": {
+    "java": ">=17",
+    "fabric": "*",
+    "fabricloader": ">=0.11.3",
+    "minecraft": ">=1.18.1"
+  }
+}
