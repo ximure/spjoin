@@ -2,7 +2,10 @@ package org.ximure.spjoin.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConnectScreen;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.util.math.MatrixStack;
@@ -32,22 +35,23 @@ public class PingConnectionScreen extends Screen {
             client.setScreen(new ConnectionScreen(new LiteralText("Connection Screen")));
         }));
 
-        startPinging();
+        startCountdown();
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
+        drawCenteredText(new MatrixStack(), textRenderer, new LiteralText("Waiting for a free slot at " + serverAddress + "..."), this.width / 2 + 13, this.height / 2 - 15, 14276563);
     }
 
-    private void startPinging() {
+    private void startCountdown() {
         new Thread(() -> {
             while (true) {
                 List<Integer> pingResult = Utils.pingServer(serverAddress);
 
                 if (pingResult == null) {
-                    MinecraftClient.getInstance().setScreen(new ConnectionScreen(new LiteralText("ping result == null")));
+                    MinecraftClient.getInstance().execute(this::setErrorScreen);
                     break;
                 }
 
@@ -55,11 +59,29 @@ public class PingConnectionScreen extends Screen {
                 Integer currentPlayers = pingResult.get(0);
 
                 if (currentPlayers < maxPlayers) {
-                    break;
+                    MinecraftClient.getInstance().execute(this::connect);
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    if (!MinecraftClient.getInstance().currentScreen.getClass().equals(DisconnectedScreen.class)) {
+                        break;
+                    }
+
+                    if (MinecraftClient.getInstance().currentScreen.getClass().equals(DisconnectedScreen.class)) {
+                        MinecraftClient.getInstance().execute(this::setScreen);
+                    }
+
+                    if (!MinecraftClient.getInstance().currentScreen.getClass().equals(PingConnectionScreen.class)) {
+                        break;
+                    }
                 }
 
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(700);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -67,20 +89,19 @@ public class PingConnectionScreen extends Screen {
         }).start();
     }
 
-    private void connectToServer() {
+    private void setErrorScreen() {
+        MinecraftClient.getInstance().setScreen(new ErrorScreen(new LiteralText("Error screen")));
+    }
+
+    private void setScreen() {
+        MinecraftClient.getInstance().setScreen(this);
+    }
+
+    private void connect() {
         ConnectScreen.connect(
-                this,
+                new MultiplayerScreen(new TitleScreen()),
                 MinecraftClient.getInstance(),
                 ServerAddress.parse(serverAddress),
-                null
-        );
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+                null);
     }
 }

@@ -18,7 +18,7 @@ public class ConnectionScreen extends Screen {
     @Override
     protected void init() {
         // enter ip text field
-        ipInputText =  this.addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 38, height / 2, 100, 15, null));
+        ipInputText =  this.addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 43, height / 2, 100, 15, null));
 
         // back button
         this.addDrawableChild(new ButtonWidget(
@@ -32,7 +32,7 @@ public class ConnectionScreen extends Screen {
 
         // connect button
          this.addDrawableChild(new ButtonWidget(
-                this.width / 2 - 25,
+                this.width / 2 - 30,
                 this.height / 2 + 20,
                 70,
                 20,
@@ -45,6 +45,6 @@ public class ConnectionScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(new MatrixStack(), textRenderer, new LiteralText("No slots? No problem"), this.width / 2 + 13, this.height / 2 - 15, 14276563);
+        drawCenteredText(new MatrixStack(), textRenderer, new LiteralText("Enter IP address"), this.width / 2 + 5, this.height / 2 - 15, 14276563);
     }
 }

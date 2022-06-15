@@ -25,8 +25,8 @@ public class MultiplayerScreenMixin extends Screen {
         );
 
         this.addDrawableChild(new ButtonWidget(
-                this.width / 2 - 100 + 205,
-                5,
+                this.width / 2 + 100,
+                7,
                 55,
                 20,
                 new LiteralText("No slots?"), (buttonWidget) -> {
