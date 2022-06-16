@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ServerAddress;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -16,11 +17,11 @@ import org.ximure.spjoin.Utils;
 import java.util.List;
 
 public class PingConnectionScreen extends Screen {
-    private final String serverAddress;
+    private final ServerInfo serverInfo;
 
-    public PingConnectionScreen(Text title, String serverAddress) {
+    public PingConnectionScreen(Text title, ServerInfo serverInfo) {
         super(title);
-        this.serverAddress = serverAddress;
+        this.serverInfo = serverInfo;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class PingConnectionScreen extends Screen {
                 70,
                 20,
                 new LiteralText("Back"), (button) -> {
-            client.setScreen(new ConnectionScreen(new LiteralText("Connection Screen")));
+            client.setScreen(new MultiplayerScreen(null));
         }));
 
         startCountdown();
@@ -42,13 +43,13 @@ public class PingConnectionScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
-        drawCenteredText(new MatrixStack(), textRenderer, new LiteralText("Waiting for a free slot at " + serverAddress + "..."), this.width / 2 + 13, this.height / 2 - 15, 14276563);
+        drawCenteredText(new MatrixStack(), textRenderer, new LiteralText("Waiting for a free slot at " + serverInfo + "..."), this.width / 2 + 13, this.height / 2 - 15, 14276563);
     }
 
     private void startCountdown() {
         new Thread(() -> {
             while (true) {
-                List<Integer> pingResult = Utils.pingServer(serverAddress);
+                List<Integer> pingResult = Utils.pingServer(serverInfo.address);
 
                 if (pingResult == null) {
                     MinecraftClient.getInstance().execute(this::setErrorScreen);
@@ -101,7 +102,7 @@ public class PingConnectionScreen extends Screen {
         ConnectScreen.connect(
                 new MultiplayerScreen(new TitleScreen()),
                 MinecraftClient.getInstance(),
-                ServerAddress.parse(serverAddress),
-                null);
+                ServerAddress.parse(serverInfo.address),
+                serverInfo);
     }
 }

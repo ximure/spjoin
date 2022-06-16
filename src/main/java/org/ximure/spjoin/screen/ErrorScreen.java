@@ -1,6 +1,7 @@
 package org.ximure.spjoin.screen;
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
@@ -21,7 +22,7 @@ public class ErrorScreen extends Screen {
                 70,
                 20,
                 new LiteralText("Back"), (button) -> {
-            client.setScreen(new ConnectionScreen(new LiteralText("Error screen")));
+            client.setScreen(new MultiplayerScreen(null));
         }));
     }
 
